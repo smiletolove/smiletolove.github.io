@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>jQuery事件委托 | Xiao Cheng</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="JavaScript(jQuery)中的事件委托一：什么是事件委托？ 事件委托是利用事件冒泡，只指定一个事件处理程序来管理某一类型的所有事件。">
+<meta name="keywords" content="jQuery事件委托">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jQuery事件委托">
+<meta property="og:url" content="https://smiletolove.github.io/2018/05/02/jQuery事件委托/index.html">
+<meta property="og:site_name" content="Xiao Cheng">
+<meta property="og:description" content="JavaScript(jQuery)中的事件委托一：什么是事件委托？ 事件委托是利用事件冒泡，只指定一个事件处理程序来管理某一类型的所有事件。">
+<meta property="og:locale" content="zn-CN">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/jQuery/委托1.jpg">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/jQuery/委托2.jpg">
+<meta property="og:updated_time" content="2019-03-05T05:58:08.182Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jQuery事件委托">
+<meta name="twitter:description" content="JavaScript(jQuery)中的事件委托一：什么是事件委托？ 事件委托是利用事件冒泡，只指定一个事件处理程序来管理某一类型的所有事件。">
+<meta name="twitter:image" content="https://smiletolove.github.io/css/images/jQuery/委托1.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Xiao Cheng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/lib/gitalk.css">
+    <script src="/lib/gitalk.min.js"></script> 
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Xiao Cheng</a>
+      </h1>
+      <p class="pb-word">personal blog</p>
+      
+    </div>
+    <div id="mobliewrap">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon">
+        </a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+          <a class="main-nav-link" href="/Messageboard">Messageboard</a>
+        
+      </nav>
+  
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://smiletolove.github.io"></form>
+      </div>
+    </div>
+  </div>
+  </div>
+</header>
+
+
+
+
+      <div class="outer">
+        <section id="main"><article id="post-jQuery事件委托" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/02/jQuery事件委托/" class="article-date">
+  <time datetime="2018-05-01T16:07:27.000Z" itemprop="datePublished">2018-05-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/jQuery/">jQuery</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      jQuery事件委托
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JavaScript-jQuery-中的事件委托"><a href="#JavaScript-jQuery-中的事件委托" class="headerlink" title="JavaScript(jQuery)中的事件委托"></a>JavaScript(jQuery)中的事件委托</h2><p>一：什么是事件委托？</p>
+<p>事件委托是利用事件冒泡，只指定一个事件处理程序来管理某一类型的所有事件。<image src="/css/images/表情/打牌.gif" style="display:block;margin:40px auto 0;"><a id="more"></a></image></p>
+<p>二：为什么要用事件委托？</p>
+<p>1.在JavaScript中添加到页面上的事件处理程序的个数直接关系到页面的整体运行性能。为什么呢？因为，每个事件处理函数都是对象，对象会占用内存，内存中的对象越多，性能就越差。此外，必须事先指定所有的事件处理程序而导致的DOM访问次数，会延迟整个页面的交互就绪时间。</p>
+<p>2.对有很多个数据的表格以及很长的列表逐个添加事件，简直就是噩梦。所以事件委托，能极大地提高页面的运行性能，减少开发人员的工作量。</p>
+<p>三：JavaScript中的例子</p>
+<p>我们以下面的HTML代码为例，用事件委托的方式实现当鼠标单击某个li元素的时候，li元素的背景变成红色。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul id = <span class="string">"lists"</span>&gt;</span><br><span class="line">         &lt;li&gt;列表1&lt;/li&gt;</span><br><span class="line">         &lt;li&gt;列表2&lt;/li&gt;</span><br><span class="line">         &lt;li&gt;列表3&lt;/li&gt;</span><br><span class="line">         &lt;li&gt;列表4&lt;/li&gt;</span><br><span class="line">         &lt;li&gt;列表5&lt;/li&gt;</span><br><span class="line">         &lt;li&gt;列表6&lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure></p>
+<p> 下面是JavaScript代码：</p>
+<pre><code> var lists = document.getElementById(&quot;lists&quot;);
+
+ lists.addEventListener(&quot;click&quot;,function(event){
+
+     var target = event.target;
+     //防止父元素ul也触发事件
+     if(target.nodeName == &quot;LI&quot;){
+        target.style.backgroundColor = &quot;red&quot;;
+     }
+})
+</code></pre><p>单击列表4，实现效果：<br><img src="/css/images/jQuery/委托1.jpg" alt><br><img src="/css/images/jQuery/委托2.jpg" alt><br>未单击之前单击列表4之后</p>
+<p> 三：jQuery中的例子<br>jQuery中的事件委托方式比较丰富，就以同样的例子来说：<br>1、用on方法,代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="function"><span class="title">function</span></span>()&#123;</span><br><span class="line">           $(<span class="string">"#lists"</span>).on(<span class="string">"click"</span>,<span class="string">"li"</span>,<span class="keyword">function</span>(event)&#123;</span><br><span class="line">               var target = $(event.target);</span><br><span class="line">               target.css(<span class="string">"background-color"</span>,<span class="string">"red"</span>);</span><br><span class="line">           &#125;)</span><br><span class="line">       &#125;)</span><br></pre></td></tr></table></figure>
+<p>2.用delegate（）方法，代码如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="function"><span class="title">function</span></span>()&#123;</span><br><span class="line">    $(<span class="string">"#lists"</span>).delegate(<span class="string">"li"</span>,<span class="string">"click"</span>,<span class="keyword">function</span>(event)&#123;                 var target = $(event.target);</span><br><span class="line">        target.css(<span class="string">"background-color"</span>,<span class="string">"red"</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>on()方法和delegate（）方法对于事件委托的写法很像。并且执行事件委托的时候只有子元素（本文中的li）会触发事件，而代为执行的父元素（本文中为ul）不会触发事件，所以我们不需要盘判断触发事件的元素节点名，这一点明显优于原生的JavaScript。</p>
+<p>3.用bind()方法，代码如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="function"><span class="title">function</span></span>()&#123;</span><br><span class="line">     $(<span class="string">"#lists"</span>).<span class="built_in">bind</span>(<span class="string">"click"</span>,<span class="string">"li"</span>,<span class="keyword">function</span>(event)&#123;</span><br><span class="line">         var target = $(event.target);</span><br><span class="line">         <span class="keyword">if</span>(target.prop(<span class="string">"nodeName"</span>)==<span class="string">"LI"</span>)&#123;</span><br><span class="line">        target.css(<span class="string">"background-color"</span>,<span class="string">"red"</span>);&#125;</span><br><span class="line">    &#125;)</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>bind()方法同原生的JavaScript实现方法一样，当父元素代子元素执行事件时，父元素也会触发事件，所以我们需要判断一下触发事件的元素名。此外，用bind()方法给元素绑定事件的时候要注意，它只能给已经存在DOM元素添加事件，不能给未来存在DOM</p>
+<p>元素添加添加事件。如果要频繁地添加DOM元素，并且给新添加的DOM元素绑定事件的话，用live(),delegate(),on()等方法。鉴于jQuery从1.7之后就不推荐live（）和delegate（）方法了，所以大家还是使用on（）方法吧。</p>
+
+        <div class="gitalk">
+            <div id="gitalk-container"></div>
+            <script type="text/javascript">
+                const gitalk = new Gitalk({
+                    clientID: '01ac30113322c55ec0bf',
+                    clientSecret: 'c1443c094f97e98e1f800d893f692ff6c5361b38',
+                    repo: 'smiletolove.github.io',
+                    owner: 'smiletolove',
+                    admin: ['smiletolove'],
+                    id: location.pathname,      // Ensure uniqueness and length less than 50
+                    distractionFreeMode: false  // Facebook-like distraction free mode
+                })
+        
+                gitalk.render('gitalk-container')
+            </script>
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://smiletolove.github.io/2018/05/02/jQuery事件委托/" data-id="cjt43ldir0008b0q2f6qwwpir" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jQuery事件委托/">jQuery事件委托</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/09/01/MongoDB下载、安装与部署/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MongoDB下载、安装与部署
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/02/jQuery选择器总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">jQuery选择器总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MongoDB/">MongoDB</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/jQuery/">jQuery</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AMD/">AMD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMD/">CMD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gitalk评论插件/">gitalk评论插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jQuery事件委托/">jQuery事件委托</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jQuery选择器/">jQuery选择器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js原型链/">js原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/闭包/">闭包</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMD/" style="font-size: 10px;">AMD</a> <a href="/tags/CMD/" style="font-size: 10px;">CMD</a> <a href="/tags/MongoDB/" style="font-size: 10px;">MongoDB</a> <a href="/tags/gitalk评论插件/" style="font-size: 10px;">gitalk评论插件</a> <a href="/tags/jQuery事件委托/" style="font-size: 10px;">jQuery事件委托</a> <a href="/tags/jQuery选择器/" style="font-size: 10px;">jQuery选择器</a> <a href="/tags/js原型链/" style="font-size: 10px;">js原型链</a> <a href="/tags/闭包/" style="font-size: 10px;">闭包</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/03/03/gitalk评论插件在hexo中的应用.1/">gitalk评论插件在Hexo中的应用</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/09/AMD与CMD的区别/">AMD与CMD的区别</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/02/闭包/">闭包</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/01/彻底搞懂js原型链/">彻底搞懂js原型链</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/01/MongoDB下载、安装与部署/">MongoDB下载、安装与部署</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Xiao Cheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+    <a href="/Messageboard" class="mobile-nav-link">Messageboard</a>
+  
+</nav>
+    
+
+<script src="/lib/jquery-3.3.1.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

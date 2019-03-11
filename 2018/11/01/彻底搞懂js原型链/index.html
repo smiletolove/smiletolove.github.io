@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>彻底搞懂js原型链 | Xiao Cheng</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对象要清楚原型链,首先要弄清楚对象： 普通对象最普通的对象：有proto属性（指向其原型链），没有prototype属性。原型对象(person.prototype 原型对象还有constructor属性（指向构造函数对象）)">
+<meta name="keywords" content="js原型链">
+<meta property="og:type" content="article">
+<meta property="og:title" content="彻底搞懂js原型链">
+<meta property="og:url" content="https://smiletolove.github.io/2018/11/01/彻底搞懂js原型链/index.html">
+<meta property="og:site_name" content="Xiao Cheng">
+<meta property="og:description" content="对象要清楚原型链,首先要弄清楚对象： 普通对象最普通的对象：有proto属性（指向其原型链），没有prototype属性。原型对象(person.prototype 原型对象还有constructor属性（指向构造函数对象）)">
+<meta property="og:locale" content="zn-CN">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/js原型链/js原型链.jpg">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/js原型链/思路.jpg">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/js原型链/图解.jpg">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/js原型链/详细图.jpg">
+<meta property="og:image" content="https://smiletolove.github.io/css/images/js原型链/总结.jpg">
+<meta property="og:updated_time" content="2019-03-05T05:57:38.214Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="彻底搞懂js原型链">
+<meta name="twitter:description" content="对象要清楚原型链,首先要弄清楚对象： 普通对象最普通的对象：有proto属性（指向其原型链），没有prototype属性。原型对象(person.prototype 原型对象还有constructor属性（指向构造函数对象）)">
+<meta name="twitter:image" content="https://smiletolove.github.io/css/images/js原型链/js原型链.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Xiao Cheng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/lib/gitalk.css">
+    <script src="/lib/gitalk.min.js"></script> 
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Xiao Cheng</a>
+      </h1>
+      <p class="pb-word">personal blog</p>
+      
+    </div>
+    <div id="mobliewrap">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon">
+        </a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+          <a class="main-nav-link" href="/Messageboard">Messageboard</a>
+        
+      </nav>
+  
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://smiletolove.github.io"></form>
+      </div>
+    </div>
+  </div>
+  </div>
+</header>
+
+
+
+
+      <div class="outer">
+        <section id="main"><article id="post-彻底搞懂js原型链" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/01/彻底搞懂js原型链/" class="article-date">
+  <time datetime="2018-11-01T15:54:06.000Z" itemprop="datePublished">2018-11-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/js/">js</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      彻底搞懂js原型链
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h2><p>要清楚原型链,首先要弄清楚对象：</p>
+<p>普通对象<br>最普通的对象：有<strong>proto</strong>属性（指向其原型链），没有prototype属性。<br>原型对象(person.prototype 原型对象还有constructor属性（指向构造函数对象）)<image src="/css/images/表情/好期待.gif" style="display:block;margin:20px auto 0;"><a id="more"></a><br>函数对象：<br>凡是通过new Function()创建的都是函数对象。<br>拥有<strong>proto</strong>、prototype属性（指向原型对象）。<br>Function、Object、Array、Date、String、自定义函数<br>特例： Function.prototype(是原型对象，却是函数对象，下面会有解释)<br>函数对象<br>function f1(){};<br>var f2 = function(){};<br>var f3 = function(“n1”,”n2”,”return n1+n2”);</image></p>
+<p>console.log(typeof f1);  //function<br>console.log(typeof f2);  //function<br>console.log(typeof f3);   //function<br>console.log(typeof Object);   //function<br>console.log(typeof Array);   //function<br>console.log(typeof String);   //function<br>console.log(typeof Date);   //function<br>console.log(typeof Function);   //function</p>
+<p>Array是函数对象，是Function的实例对象，Array是通过newFunction创建出来的。因为Array是Function的实例，所以Array.<strong>proto</strong> ===  Function.prototype</p>
+<h2 id="普通对象"><a href="#普通对象" class="headerlink" title="普通对象"></a>普通对象</h2><p>var o1 = new f1();<br>var o2 = {};<br>var o3 = new Object(); </p>
+<p>console.log(typeof o1);  //Object<br>console.log(typeof o2);   //Object<br>console.log(typeof o3);   //Object</p>
+<h2 id="原型对象"><a href="#原型对象" class="headerlink" title="原型对象"></a>原型对象</h2><p>每创建一个函数都会有一个prototype属性，这个属性是一个指针，指向一个对象（通过该构造函数创建实例对象的原型对象）。原型对象是包含特定类型的所有实例共享的属性和方法。原型对象的好处是，可以让所有实例对象共享它所包含的属性和方法。<br>第一块中有提到，原型对象属于普通对象。Function.prototype是个例外，它是原型对象，却又是函数对象，作为一个函数对象，它又没有prototype属性。<br>function person(){};</p>
+<p>console.log(typeof person.prototype) //Object<br>console.log(typeof Object.prototype) // Object<br>console.log(typeof Function.prototype) // 特殊 Function<br>console.log(typeof Function.prototype.prototype) //undefined 函数对象却没有prototype属性<br>解释：<br>functionperson(){};<br>其实原型对象就是构造函数的一个实例对象。person.prototype就是person的一个实例对象。相当于在person创建的时候，自动创建了一个它的实例，并且把这个实例赋值给了prototype。</p>
+<p> function person(){};<br>var temp = new person();<br>person.prototype = temp;</p>
+<p>function Function(){};<br>var temp = new Function();<br>Function.prototype = temp; //由new Function()产生的对象都是函数对象</p>
+<p>看懂原型对象、构造函数、实例对象之间的关系:</p>
+<p>function Dog(){};</p>
+<p>Dog.prototype.name = “小黄”;<br>Dog.prototype.age =  13;<br>Dog.prototype.getAge = function(){<br>    return this.age;<br>}</p>
+<p>var dog1 = new Dog();<br>var dog2 = new Dog();</p>
+<p>dog2.name = “小黑”;<br>console.log(dog1.name); // 小黄 来自原型<br>console.log(dog2.name); // 小黑 来自实例<br><img src="/css/images/js原型链/js原型链.jpg" alt><br>//图中的一些关系<br>dog1.<strong>proto</strong> === Dog.prototype</p>
+<p>Dog.prototype.<strong>proto</strong> === Object.prototype //继承Object 下面原型链说</p>
+<p>dog1.<strong>proto</strong>.<strong>proto</strong> === Object.prototype</p>
+<p>Dog.prototype.constructor === Dog </p>
+<p>Dog.prototype.isPrototypeOf(dog1)</p>
+<p>获取对象的原型<br>dog1.<strong>proto</strong>  //不推荐<br>Object.getPrototypeOf(dog1) === Dog.prototype   //推荐</p>
+<h2 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h2><p>原型链是实现继承的主要方法。</p>
+<p>先说一下继承，许多OO语言都支持两张继承方式：接口继承、实现继承。</p>
+<p>|- 接口继承：只继承方法签名</p>
+<p>|- 实现继承：继承实际的方法</p>
+<p>由于函数没有签名，在ECMAScript中无法实现接口继承，只支持实现继承，而实现继承主要是依靠原型链来实现。</p>
+<p>原型链基本思路：<br><img src="/css/images/js原型链/思路.jpg" alt><br>利用原型让一个引用类型继承另一个引用类型的属性和方法。</p>
+<p>每个构造函数都有一个原型对象，原型对象都包含一个指向构造函数想指针(constructor)，而实例对象都包含一个指向原型对象的内部指针(<strong>proto</strong>)。如果让原型对象等于另一个类型的实例，此时的原型对象将包含一个指向另一个原型的指针(<strong>proto</strong>)，另一个原型也包含着一个指向另一个构造函数的指针(constructor)。假如另一个原型又是另一个类型的实例……这就构成了实例与原型的链条。</p>
+<p>原型链基本思路（图解）：</p>
+<p>举例说明：</p>
+<p>function animal(){<br>    this.type = “animal”;<br>}<br>animal.prototype.getType = function(){<br>    return this.type;<br>}</p>
+<p>function dog(){<br>    this.name = “dog”;<br>}<br>dog.prototype = new animal();</p>
+<p>dog.prototype.getName = function(){<br>    return this.name;<br>}</p>
+<p>var xiaohuang = new dog();</p>
+<p> //原型链关系<br>xiaohuang.<strong>proto</strong> === dog.prototype<br>dog.prototype.<strong>proto</strong> === animal.prototype<br>animal.prototype.<strong>proto</strong> === Object.prototype<br>Object.prototype.<strong>proto</strong> === null</p>
+<p>图解:<br><img src="/css/images/js原型链/图解.jpg" alt></p>
+<p>详细图<br><img src="/css/images/js原型链/详细图.jpg" alt></p>
+<p>从xiaohuang这个实例，看出整个链条</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p><img src="/css/images/js原型链/总结.jpg" alt><br>Xiaohuang这个Dog的实例对象继承了Animal，Animal继承了Object。</p>
+
+        <div class="gitalk">
+            <div id="gitalk-container"></div>
+            <script type="text/javascript">
+                const gitalk = new Gitalk({
+                    clientID: '01ac30113322c55ec0bf',
+                    clientSecret: 'c1443c094f97e98e1f800d893f692ff6c5361b38',
+                    repo: 'smiletolove.github.io',
+                    owner: 'smiletolove',
+                    admin: ['smiletolove'],
+                    id: location.pathname,      // Ensure uniqueness and length less than 50
+                    distractionFreeMode: false  // Facebook-like distraction free mode
+                })
+        
+                gitalk.render('gitalk-container')
+            </script>
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://smiletolove.github.io/2018/11/01/彻底搞懂js原型链/" data-id="cjt43ldit000ab0q24e26wwmh" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/js原型链/">js原型链</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/01/02/闭包/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          闭包
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/09/01/MongoDB下载、安装与部署/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">MongoDB下载、安装与部署</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MongoDB/">MongoDB</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/jQuery/">jQuery</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AMD/">AMD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMD/">CMD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gitalk评论插件/">gitalk评论插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jQuery事件委托/">jQuery事件委托</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jQuery选择器/">jQuery选择器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js原型链/">js原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/闭包/">闭包</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMD/" style="font-size: 10px;">AMD</a> <a href="/tags/CMD/" style="font-size: 10px;">CMD</a> <a href="/tags/MongoDB/" style="font-size: 10px;">MongoDB</a> <a href="/tags/gitalk评论插件/" style="font-size: 10px;">gitalk评论插件</a> <a href="/tags/jQuery事件委托/" style="font-size: 10px;">jQuery事件委托</a> <a href="/tags/jQuery选择器/" style="font-size: 10px;">jQuery选择器</a> <a href="/tags/js原型链/" style="font-size: 10px;">js原型链</a> <a href="/tags/闭包/" style="font-size: 10px;">闭包</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/03/03/gitalk评论插件在hexo中的应用.1/">gitalk评论插件在Hexo中的应用</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/09/AMD与CMD的区别/">AMD与CMD的区别</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/02/闭包/">闭包</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/01/彻底搞懂js原型链/">彻底搞懂js原型链</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/01/MongoDB下载、安装与部署/">MongoDB下载、安装与部署</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Xiao Cheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+    <a href="/Messageboard" class="mobile-nav-link">Messageboard</a>
+  
+</nav>
+    
+
+<script src="/lib/jquery-3.3.1.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
